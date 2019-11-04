@@ -191,12 +191,17 @@ public class App{
 		
 		// Create a new alarm if temperature > 50C°
 		if(temperature>50.0) {
+			// alarm reprentation object
 			AlarmRepresentation alarmRepresentation = new AlarmRepresentation();
+			
+			// set alarm properties
 			alarmRepresentation.setDateTime(new DateTime());
 			alarmRepresentation.setSource(managedObjectRepresentation);
 			alarmRepresentation.setText("Temperature limit exceeded!");
 			alarmRepresentation.setType("Temperature_Alarm");
-			alarmRepresentation.setSeverity("CRITICAL");	
+			alarmRepresentation.setSeverity("CRITICAL");
+			
+			// create an alarm
 			alarmApi.create(alarmRepresentation);	
 		}			
 		
@@ -220,7 +225,7 @@ public class App{
 	public String getAlarmById(@RequestParam(value = "alarmId") String alarmId) {
 		if(alarmId.length()>=1) {
 			try {
-				// Use GId to transform the given id to global c8y id
+				// Use GId to transform the given id to a global c8y id
 				AlarmRepresentation alarmRepresentation = alarmApi.getAlarm(GId.asGId(alarmId));
 				return alarmRepresentation.toJSON();
 			} catch(Exception e) {
@@ -233,8 +238,11 @@ public class App{
 	// get all alarms
 	@RequestMapping("getAllAlarms")
 	public List<AlarmRepresentation> getAllAlarms() {
-		AlarmCollection alarmCollection = alarmApi.getAlarms();		
-		PagedAlarmCollectionRepresentation pagedAlarmCollectionRepresentation = alarmCollection.get(2000);
+		// Get an alarm collection object by using the alarm api
+		AlarmCollection alarmCollection = alarmApi.getAlarms();
+		// Get a paged alarm collection representation. Insert the number e.g. alarmCollection.get(100) for restriction of number of results to 100.
+		PagedAlarmCollectionRepresentation pagedAlarmCollectionRepresentation = alarmCollection.get();
+		// Use the paged alarm collection representation to get the list of alarms
 		List<AlarmRepresentation> alarmRepresentations = pagedAlarmCollectionRepresentation.getAlarms();
 		return alarmRepresentations;
 	}
